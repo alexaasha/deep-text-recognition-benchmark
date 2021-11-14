@@ -17,3 +17,25 @@ class BidirectionalLSTM(nn.Module):
         recurrent, _ = self.rnn(input)  # batch_size x T x input_size -> batch_size x T x (2*hidden_size)
         output = self.linear(recurrent)  # batch_size x T x output_size
         return output
+
+
+class ResTrans(nn.Module):
+    def __init__(self, backbone, num_classes=12):
+        super().__init__()
+        self.backbone = nn.Sequential(*list(backbone.children())[:-2])
+
+        transformer_layer = nn.TransformerEncoderLayer(512, 4)
+        self.transformer = nn.TransformerEncoder(encoder_layer=transformer_layer, num_layers=4)
+        self.pooling = nn.AdaptiveAvgPool1d(1)
+        self.linear = nn.Linear(512, out_features=num_classes)
+
+    def forward(self, x):
+        # batch_size, channel, h, w
+        x = self.backbone(x)
+        # batch_size, h, w, channel
+        batch_size, channel, h, w = x.shape
+        x = x.permute(0, 2, 3, 1)
+        x = x.view(batch_size, -1, 512)
+        x = self.transformer(x)
+        x = self.pooling(x.permute(0, 2, 1)).view(batch_size, 512)
+        return self.linear(x)

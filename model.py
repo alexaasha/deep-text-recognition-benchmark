@@ -15,6 +15,7 @@ limitations under the License.
 """
 
 import torch.nn as nn
+import torchvision
 
 from modules.transformation import TPS_SpatialTransformerNetwork
 from modules.feature_extraction import VGG_FeatureExtractor, RCNN_FeatureExtractor, ResNet_FeatureExtractor
@@ -54,6 +55,10 @@ class Model(nn.Module):
             self.SequenceModeling = nn.Sequential(
                 BidirectionalLSTM(self.FeatureExtraction_output, opt.hidden_size, opt.hidden_size),
                 BidirectionalLSTM(opt.hidden_size, opt.hidden_size, opt.hidden_size))
+            self.SequenceModeling_output = opt.hidden_size
+        elif opt.SequenceModeling == 'Transformer':
+            resnet18 = torchvision.models.resnet18(pretrained=True)
+            self.SequenceModeling = ResTrans(resnet18, self.FeatureExtraction_output, opt.hidden_size, opt.hidden_size)
             self.SequenceModeling_output = opt.hidden_size
         else:
             print('No SequenceModeling module specified')

@@ -20,14 +20,14 @@ class BidirectionalLSTM(nn.Module):
 
 
 class ResTrans(nn.Module):
-    def __init__(self, backbone, num_classes=12):
+    def __init__(self, backbone, input_size, hidden_size, output_size):
         super().__init__()
         self.backbone = nn.Sequential(*list(backbone.children())[:-2])
 
-        transformer_layer = nn.TransformerEncoderLayer(512, 4)
+        transformer_layer = nn.TransformerEncoderLayer(input_size, nhead=4)
         self.transformer = nn.TransformerEncoder(encoder_layer=transformer_layer, num_layers=4)
         self.pooling = nn.AdaptiveAvgPool1d(1)
-        self.linear = nn.Linear(512, out_features=num_classes)
+        self.linear = nn.Linear(hidden_size * 2, out_features=output_size)
 
     def forward(self, x):
         # batch_size, channel, h, w

@@ -58,7 +58,7 @@ class Model(nn.Module):
             self.SequenceModeling_output = opt.hidden_size
         elif opt.SequenceModeling == 'Transformer':
             resnet18 = torchvision.models.resnet18(pretrained=True)
-            self.SequenceModeling = ResTrans(resnet18, self.FeatureExtraction_output, opt.hidden_size, opt.hidden_size)
+            self.SequenceModeling = ResTrans(resnet18, self.FeatureExtraction_output, opt.hidden_size)
             self.SequenceModeling_output = opt.hidden_size
         else:
             print('No SequenceModeling module specified')
@@ -83,7 +83,7 @@ class Model(nn.Module):
         visual_feature = visual_feature.squeeze(3)
 
         """ Sequence modeling stage """
-        if self.stages['Seq'] == 'BiLSTM':
+        if self.stages['Seq'] in ('BiLSTM', 'Transformer'):
             contextual_feature = self.SequenceModeling(visual_feature)
         else:
             contextual_feature = visual_feature  # for convenience. this is NOT contextually modeled by BiLSTM

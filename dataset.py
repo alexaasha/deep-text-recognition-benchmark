@@ -108,11 +108,11 @@ def hierarchical_dataset(root, opt, select_data='/'):
     dataset_log += '\n'
     for dirpath, dirnames, filenames in os.walk(root+'/'):
         if not dirnames:
-            select_flag = False
-            for selected_d in select_data:
-                if selected_d in dirpath:
-                    select_flag = True
-                    break
+            select_flag = True
+            # for selected_d in select_data:
+            #     if selected_d in dirpath:
+            #         select_flag = True
+            #         break
 
             if select_flag:
                 dataset = LmdbDataset(dirpath, opt)

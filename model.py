@@ -57,8 +57,7 @@ class Model(nn.Module):
                 BidirectionalLSTM(opt.hidden_size, opt.hidden_size, opt.hidden_size))
             self.SequenceModeling_output = opt.hidden_size
         elif opt.SequenceModeling == 'Transformer':
-            resnet18 = torchvision.models.resnet18(pretrained=True)
-            self.SequenceModeling = ResTrans(resnet18)
+            self.SequenceModeling = ResTrans()
             self.SequenceModeling_output = opt.hidden_size
         else:
             print('No SequenceModeling module specified')

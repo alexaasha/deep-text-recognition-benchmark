@@ -20,7 +20,7 @@ class BidirectionalLSTM(nn.Module):
 
 
 class ResTrans(nn.Module):
-    def __init__(self, output_size=10):
+    def __init__(self, output_size=256):
         super().__init__()
         transformer_layer = nn.TransformerEncoderLayer(512, 4)
         self.transformer = nn.TransformerEncoder(encoder_layer=transformer_layer, num_layers=4)
@@ -32,5 +32,5 @@ class ResTrans(nn.Module):
         batch_size, channel, size = x.shape
         x = self.transformer(x)
         x = self.pooling(x.permute(0, 2, 1)).view(batch_size, 512)
-        x = self.linear(x).unsqueeze(1)
+        x = self.linear(x).unsqueeze(1).repeat(1, channel, 1)
         return x

@@ -58,7 +58,7 @@ class Model(nn.Module):
             self.SequenceModeling_output = opt.hidden_size
         elif opt.SequenceModeling == 'Transformer':
             resnet18 = torchvision.models.resnet18(pretrained=True)
-            self.SequenceModeling = ResTrans(resnet18, self.FeatureExtraction_output, opt.hidden_size)
+            self.SequenceModeling = ResTrans(resnet18)
             self.SequenceModeling_output = opt.hidden_size
         else:
             print('No SequenceModeling module specified')

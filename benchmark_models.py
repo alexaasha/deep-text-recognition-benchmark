@@ -91,7 +91,8 @@ def inference(precision="float"):
         print(f"Precision: {precision}; Model: {model_name}")
         for step, img in enumerate(rand_loader):
             img = getattr(img, precision)()
-            text, _ = converter.encode(["label"], batch_max_length=model_opts.batch_max_length)
+            text, _ = converter.encode(["label"] * model_opts.batch_size,
+                                       batch_max_length=model_opts.batch_max_length)
             torch.cuda.synchronize()
             start = time.time()
             model(img.to(device), text)

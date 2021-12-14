@@ -20,7 +20,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # This flag allows you to enable the inbuilt cudnn auto-tuner to find the best algorithm to use for your hardware.
 # If you check it using the profile tool, the cnn method such as winograd, fft, etc. is used for the first iteration and the best operation is selected for the device.
 
-precisions = "float"
+precisions = ["float"]
 # For post-voltaic architectures, there is a possibility to use tensor-core at half precision.
 # Due to the gradient overflow problem, apex is recommended for practical use.
 

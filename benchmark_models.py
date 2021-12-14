@@ -93,7 +93,7 @@ def inference(precision="float"):
             img = getattr(img, precision)()
             torch.cuda.synchronize()
             start = time.time()
-            model(img.to(device), "random text")
+            model(img.to(device), [1, 2, 3])
             torch.cuda.synchronize()
             end = time.time()
             if step >= bench_opts.WARM_UP:

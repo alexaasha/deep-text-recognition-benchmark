@@ -61,7 +61,7 @@ bench_opts.BATCH_SIZE *= bench_opts.NUM_GPU
 class RandomDataset(Dataset):
     def __init__(self, length):
         self.len = length
-        self.data = torch.randn(3, 224, 224, length)
+        self.data = torch.randn(model_opts.input_channel, model_opts.imgH, model_opts.imgW, length)
 
     def __getitem__(self, index):
         return self.data[:, :, :, index]
@@ -72,7 +72,7 @@ class RandomDataset(Dataset):
 
 rand_loader = DataLoader(
     dataset=RandomDataset(bench_opts.BATCH_SIZE * (bench_opts.WARM_UP + bench_opts.NUM_TEST)),
-    batch_size=bench_opts.BATCH_SIZE,
+    batch_size=model_opts.batch_size,
     shuffle=False,
     num_workers=8,
 )
@@ -93,7 +93,7 @@ def inference(precision="float"):
             img = getattr(img, precision)()
             torch.cuda.synchronize()
             start = time.time()
-            model(img.to("cuda"))
+            model(img.to(device), "random text")
             torch.cuda.synchronize()
             end = time.time()
             if step >= bench_opts.WARM_UP:
@@ -118,14 +118,13 @@ if __name__ == "__main__":
                     cpu_count: {psutil.cpu_count()}\n\
                     memory_available: {psutil.virtual_memory().available}"
 
-    if device == "cuda":
-        gpu_configs = [
-            torch.cuda.device_count(),
-            torch.version.cuda,
-            torch.backends.cudnn.version(),
-            torch.cuda.get_device_name(0),
-        ]
-        gpu_configs = list(map(str, gpu_configs))
+    gpu_configs = [
+        torch.cuda.device_count(),
+        torch.version.cuda,
+        torch.backends.cudnn.version(),
+        torch.cuda.get_device_name(0),
+    ]
+    gpu_configs = list(map(str, gpu_configs))
 
     temp = [
         "Number of GPUs on current device : ",

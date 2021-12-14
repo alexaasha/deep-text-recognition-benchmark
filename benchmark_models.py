@@ -101,7 +101,7 @@ def inference(precision="float"):
             if step >= bench_opts.WARM_UP:
                 durations.append((end - start) * 1000)
         print(
-            f"{model_name} model average inference time : {sum(durations)/len(durations)}ms"
+            f"{model_name} model average inference time : {sum(durations)/(len(durations) + 1e-6)}ms"
         )
         del model
         benchmark[model_name] = durations

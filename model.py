@@ -35,6 +35,7 @@ class Model(nn.Module):
         if opt.Transformation == 'TPS':
             self.Transformation = TPS_SpatialTransformerNetwork(
                 F=opt.num_fiducial, I_size=(opt.imgH, opt.imgW), I_r_size=(opt.imgH, opt.imgW), I_channel_num=opt.input_channel)
+            self.Transformation.requires_grad = False
         else:
             print('No Transformation module specified')
 
@@ -48,6 +49,7 @@ class Model(nn.Module):
         else:
             raise Exception('No FeatureExtraction module specified')
         self.FeatureExtraction_output = opt.output_channel  # int(imgH/16-1) * 512
+        self.FeatureExtraction.requires_grad = False
         self.AdaptiveAvgPool = nn.AdaptiveAvgPool2d((None, 1))  # Transform final (imgH/16-1) -> 1
 
         """ Sequence modeling"""
@@ -70,6 +72,7 @@ class Model(nn.Module):
             self.Prediction = Attention(self.SequenceModeling_output, opt.hidden_size, opt.num_class)
         else:
             raise Exception('Prediction is neither CTC or Attn')
+        self.Prediction.requires_grad = False
 
     def forward(self, input, text, is_train=True):
         """ Transformation stage """
